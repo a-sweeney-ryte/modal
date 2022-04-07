@@ -2,6 +2,7 @@ import styles from './Modal.module.css';
 import {useState, useEffect, useMemo, cloneElement} from 'react';
 
 export const Modal = ({
+  closeOnClickChildrenButton = true,
   closeOnClickOverlay = true,
   openButton,
   openButtonText = 'Open Modal',
@@ -21,10 +22,14 @@ export const Modal = ({
     }
   }, []);
   
-  const handleOverlayClick = () => {
+  const handleOverlayClick = () => { 
     if(closeOnClickOverlay) {
       setIsOpen(!isOpen)
     }
+  }
+
+  const handleWrapperClick = (event) => { 
+    event.stopPropagation();
   }
 
   const disableScroll = () => { 
@@ -49,6 +54,13 @@ export const Modal = ({
     }
   }, [isOpen])
 
+  useEffect(() => {
+    let childContainer = document.querySelector('#modal-children-container');
+
+    let buttons = childContainer && childContainer.querySelectorAll('button');
+    console.log(buttons)
+  }, [])
+
   return ( 
     <>
       {
@@ -59,13 +71,16 @@ export const Modal = ({
         )
       }
      
-      { isOpen && 
+      { 
+        isOpen &&  
         <div className={styles.overlay} onClick={handleOverlayClick}>
-          <div className={styles.wrapper}>
+          <div className={styles.wrapper} onClick={handleWrapperClick}>
             <div className={styles.closeButtonContainer}>
               <button className={styles.closeButton} onClick={handleButtonClick}>x</button>
             </div>
-            {children}
+            <div id="modal-children-container">
+              {children}
+            </div>
           </div>
         </div>
       }
