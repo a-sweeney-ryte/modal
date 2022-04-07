@@ -1,4 +1,4 @@
-.background {
+.hero {
   height: 100vh;  
   display: flex; 
   flex-direction: column;
@@ -7,6 +7,11 @@
   background-size: cover; 
 } 
 
+.modalOpen {
+  overflow-y: hidden;
+  padding-right: 15px; /* Avoid width reflow  */
+}
+
 .heading {
   color: white;
 }
@@ -14,16 +19,7 @@
 .text {
   color: white;
 }
-
-.btnContainer {
-  display: flex;
-  justify-content: center;
-}
-
-.btn {
-  background-color: white;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  border: 2px solid black; 
+  
+.content {
   padding: 1em;
 }
