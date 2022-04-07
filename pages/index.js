@@ -11,9 +11,9 @@ export default function Home() {
         <button className={styles.btn}>Open Modal</button>
       </div>   
 
-      {/* <Modal>
+      <Modal>
         
-      </Modal>  */}
+      </Modal> 
     </div>
   )
 }
