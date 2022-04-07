@@ -6,6 +6,9 @@ export const Modal = ({
   return (
     <div className={styles.overlay}>
       <div className={styles.wrapper}>
+        <div className={styles.closeButtonContainer}>
+          <button className={styles.closeButton}>x</button>
+        </div>
         {children}
       </div>
     </div>
