@@ -8,10 +8,14 @@ export const Modal = ({
   openButtonText = 'Open Modal',
   children,
 }) => { 
-  const [isOpen, setIsOpen] = useState(false);
-  const childrenContainer = useRef();
+  const [isOpen, setIsOpen] = useState(false);  
+  const childrenWithListeners = getElementsWithPropAddedToTargetType(children, 'button', 'onClick', handleButtonClick);
+  // const childrenWithListeners = useMemo(() => {
+  //   return getElementsWithOnClickListeners(children);
+  // }, [])  
+  const [modalContent, setModalContent] = useState(children); 
 
-  // add onClick handler to 
+  // add onClick handler to props.openButton
   const clickableOpenButton = useMemo(() => {
     if(openButton) {
       return addPropToElement(openButton, 'onClick', handleButtonClick);
@@ -19,15 +23,25 @@ export const Modal = ({
   }, []);
   
   // Functions
-  const addPropToElement = (element, key, value) => {
+  function addPropToElement(element, key: string, value: Function) {
     return cloneElement(
       element,
-      { key: value}
+      { [key]: value}
     )
   }
 
-  function getChildrenButtons() {
-    return childrenContainer.current && childrenContainer.current.querySelectorAll('button');
+  function getElementsWithPropAddedToTargetType(elements, targetType, key, value) {
+    return Array.from(elements).map(element => { 
+      let newElement;
+
+      if(element.type === targetType) {
+        newElement = addPropToElement(element, key, value);
+      } else {
+        newElement = element;
+      }
+
+      return newElement;
+    })
   }
 
   const disableScroll = () => { 
@@ -40,24 +54,16 @@ export const Modal = ({
     document.body.style.overflow = 'overlay'; 
   }
 
-  const addListenersToChildrenButtons = () => { 
-    const childrenButtons = getChildrenButtons();
-
-    closeOnClickChildrenButton && childrenButtons && childrenButtons.forEach(button => {
-      button.addEventListener('click', handleButtonClick)
-    })
+  const addListenersToChildrenButtons = () => {  
+    setModalContent(childrenWithListeners)
   }
 
-  const removeListenersFromChildrenButtons = () => {
-    const childrenButtons = getChildrenButtons();
-
-    closeOnClickChildrenButton && childrenButtons && childrenButtons.forEach(button => {
-      button.removeEventListener('click', handleButtonClick)
-    })
+  const removeListenersFromChildrenButtons = () => { 
+    setModalContent(children)
   }
 
   // click handlers
-  const handleButtonClick = () => {
+  function handleButtonClick() {
     setIsOpen(!isOpen)
   }
   
@@ -80,13 +86,13 @@ export const Modal = ({
   const onCloseModal = () => {
     enableScroll()
     removeListenersFromChildrenButtons()
-  }
+  } 
 
   // Listeners 
   useEffect(() => {
     if(isOpen) onOpenModal()
     if(!isOpen) onCloseModal()
-  }, [isOpen])
+  }, [isOpen]) 
  
   return ( 
     <>
@@ -105,8 +111,8 @@ export const Modal = ({
             <div className={styles.closeButtonContainer}>
               <button className={styles.closeButton} onClick={handleButtonClick}>x</button>
             </div>
-            <div id="modal-children-container" ref={childrenContainer}>
-              {children}
+            <div>
+              {modalContent}
             </div>
           </div>
         </div>
