@@ -12,7 +12,7 @@ export default function Home() {
       </div>   
 
       <Modal>
-        
+        <p>Hello World</p>
       </Modal> 
     </div>
   )

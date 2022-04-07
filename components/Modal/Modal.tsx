@@ -5,7 +5,7 @@ export const Modal = ({
 }) => { 
   return (
     <div className={styles.overlay}>
-      <div>
+      <div className={styles.wrapper}>
         {children}
       </div>
     </div>

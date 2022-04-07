@@ -1,7 +1,17 @@
 .overlay {
   height: 100vh;
-  width: 100%;
-  background-color: red;
+  width: 100%; 
   position: absolute;
+  background-color: red; 
+  top: 0;
+  left: 0; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper {
+  background-color: white;
+  padding: 1em;
 }
 
