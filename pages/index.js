@@ -9,7 +9,7 @@ export default function Home() {
         <h1 className={styles.heading}>Example Heading</h1>
         <p className={styles.text}>example text</p>
  
-        <Modal>
+        <Modal openButton={<button>Passed Button</button>}>
           <p>Hello World</p>
         </Modal> 
       </div>
