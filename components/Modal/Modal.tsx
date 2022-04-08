@@ -1,5 +1,5 @@
 import styles from './Modal.module.css';
-import {useState, useEffect, useMemo, cloneElement, useRef} from 'react';
+import {useState, useEffect, useMemo, cloneElement, memo} from 'react';
 
 export const Modal = ({
   closeOnClickChildrenButton = true,
@@ -8,12 +8,18 @@ export const Modal = ({
   openButtonText = 'Open Modal',
   children,
 }) => { 
-  const [isOpen, setIsOpen] = useState(false);  
-  const childrenWithListeners = getElementsWithPropAddedToTargetType(children, 'button', 'onClick', handleChildrenButtonClick);
-  // const childrenWithListeners = useMemo(() => {
-  //   return getElementsWithOnClickListeners(children);
-  // }, [])  
-  const [modalContent, setModalContent] = useState(children); 
+  const [isOpen, setIsOpen] = useState(false); 
+  const childrenWithButtonListeners = useMemo(() => {
+    return getElementsWithPropAddedToTargetType(children, 'button', 'onClick', () => toggleValue(setIsOpen, isOpen, closeOnClickChildrenButton));
+  }, [children, setIsOpen, isOpen]);
+
+  const modalContent = useMemo(() => {
+    if(isOpen) {
+      return childrenWithButtonListeners;
+    } else {
+      return children;
+    }
+  }, [isOpen])
 
   // add onClick handler to props.openButton
   const clickableOpenButton = useMemo(() => {
@@ -54,22 +60,14 @@ export const Modal = ({
     document.body.style.overflow = 'overlay'; 
   }
 
-  const addListenersToChildrenButtons = () => {  
-    setModalContent(childrenWithListeners)
-  }
-
-  const removeListenersFromChildrenButtons = () => { 
-    setModalContent(children)
-  }
-
   // ====== click handlers
   function handleButtonClick() {
     setIsOpen(!isOpen)
   }
 
-  const handleChildrenButtonClick = () => {
-    if(closeOnClickChildrenButton) {
-      setIsOpen(!isOpen)
+  function toggleValue(setFn, value, toggleOn = true) {
+    if(toggleOn) {
+      setFn(!value);
     }
   }
   
@@ -85,13 +83,11 @@ export const Modal = ({
 
   // listener handlers
   const onOpenModal = () => {
-    disableScroll()
-    addListenersToChildrenButtons()
+    disableScroll() 
   }
 
   const onCloseModal = () => {
-    enableScroll()
-    removeListenersFromChildrenButtons()
+    enableScroll() 
   } 
 
   // Listeners 
