@@ -2,8 +2,8 @@ import styles from './Modal.module.css';
 import {useState, useEffect, useMemo, cloneElement, memo} from 'react';
 
 export const Modal = ({
-  closeOnClickChildrenButton = true,
-  closeOnClickOverlay = true,
+  isCloseOnClickChildrenButton = true,
+  isCloseOnClickOverlay = true,
   openButton,
   openButtonText = 'Open Modal',
   children,
@@ -22,8 +22,8 @@ export const Modal = ({
   function updateModalContent() {
     let newModalContent;
 
-    if(isOpen && closeOnClickChildrenButton) {
-      newModalContent = addPropToElements(children, 'onClick', handleButtonClick, 'button');
+    if(isOpen && isCloseOnClickChildrenButton) {
+      newModalContent = addPropToElements(children, 'onClick', handleButtonClick, 'button'); 
     } else {
       newModalContent = children;
     }
@@ -32,7 +32,9 @@ export const Modal = ({
   }
 
   function addPropToElements(elements, key, value, targetType) {
-    return Array.from(elements).map(element => {
+    if(!Array.isArray(elements)) elements = [ elements ];
+
+    return Array.from(elements).map(element => { 
       if(targetType && element.type === targetType) {
         return addPropToElement(element, key, value);
       } else {
@@ -64,7 +66,7 @@ export const Modal = ({
   }
   
   function handleOverlayClick() { 
-    if(closeOnClickOverlay) {
+    if(isCloseOnClickOverlay) {
       setIsOpen(!isOpen)
     }
   }
@@ -81,7 +83,7 @@ export const Modal = ({
 
   function onCloseModal() {
     enableScroll()
-    updateModalContent()
+    // updateModalContent()
   } 
 
   // ====== Listeners 
