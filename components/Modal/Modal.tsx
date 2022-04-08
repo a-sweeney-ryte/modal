@@ -9,17 +9,7 @@ export const Modal = ({
   children,
 }) => { 
   const [isOpen, setIsOpen] = useState(false); 
-  const childrenWithButtonListeners = useMemo(() => {
-    return getElementsWithPropAddedToTargetType(children, 'button', 'onClick', () => toggleValue(setIsOpen, isOpen, closeOnClickChildrenButton));
-  }, [children, setIsOpen, isOpen]);
-
-  const modalContent = useMemo(() => {
-    if(isOpen) {
-      return childrenWithButtonListeners;
-    } else {
-      return children;
-    }
-  }, [isOpen])
+  const [modalContent, setModalContent] = useState(children);
 
   // add onClick handler to props.openButton
   const clickableOpenButton = useMemo(() => {
@@ -28,26 +18,34 @@ export const Modal = ({
     }
   }, []);
   
-  // Functions
+  // ====== Functions 
+  function updateModalContent() {
+    let newModalContent;
+
+    if(isOpen && closeOnClickChildrenButton) {
+      newModalContent = addPropToElements(children, 'onClick', handleButtonClick, 'button');
+    } else {
+      newModalContent = children;
+    }
+
+    setModalContent(newModalContent)
+  }
+
+  function addPropToElements(elements, key, value, targetType) {
+    return Array.from(elements).map(element => {
+      if(targetType && element.type === targetType) {
+        return addPropToElement(element, key, value);
+      } else {
+        return element;
+      }
+    })
+  }
+
   function addPropToElement(element, key: string, value: Function) {
     return cloneElement(
       element,
       { [key]: value}
     )
-  }
-
-  function getElementsWithPropAddedToTargetType(elements, targetType, key, value) {
-    return Array.from(elements).map(element => { 
-      let newElement;
-
-      if(element.type === targetType) {
-        newElement = addPropToElement(element, key, value);
-      } else {
-        newElement = element;
-      }
-
-      return newElement;
-    })
   }
 
   const disableScroll = () => { 
@@ -64,12 +62,6 @@ export const Modal = ({
   function handleButtonClick() {
     setIsOpen(!isOpen)
   }
-
-  function toggleValue(setFn, value, toggleOn = true) {
-    if(toggleOn) {
-      setFn(!value);
-    }
-  }
   
   const handleOverlayClick = () => { 
     if(closeOnClickOverlay) {
@@ -81,16 +73,18 @@ export const Modal = ({
     event.stopPropagation();
   }
 
-  // listener handlers
+  // ====== listener handlers
   const onOpenModal = () => {
-    disableScroll() 
+    disableScroll()
+    updateModalContent()
   }
 
   const onCloseModal = () => {
-    enableScroll() 
+    enableScroll()
+    updateModalContent()
   } 
 
-  // Listeners 
+  // ====== Listeners 
   useEffect(() => {
     if(isOpen) onOpenModal()
     if(!isOpen) onCloseModal()
