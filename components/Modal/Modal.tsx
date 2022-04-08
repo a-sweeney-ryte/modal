@@ -28,8 +28,19 @@ export const Modal = ({
       newModalContent = children;
     }
 
+    newModalContent = addKeysToElements(newModalContent, 'modal_content');
+
     setModalContent(newModalContent)
   }
+
+  function addKeysToElements(elements, keyPrefix) {
+    if(!Array.isArray(elements)) elements = [ elements ];
+
+    return Array.from(elements).map((element, i) => {
+      return addPropToElement(element, 'key', `${keyPrefix}_${i}`);
+    })
+  }
+
 
   function addPropToElements(elements, key, value, targetType) {
     if(!Array.isArray(elements)) elements = [ elements ];
@@ -43,7 +54,7 @@ export const Modal = ({
     })
   }
 
-  function addPropToElement(element, key: string, value: Function) {
+  function addPropToElement(element, key, value) {
     return cloneElement(
       element,
       { [key]: value}
@@ -83,7 +94,7 @@ export const Modal = ({
 
   function onCloseModal() {
     enableScroll()
-    // updateModalContent()
+    updateModalContent()
   } 
 
   // ====== Listeners 
