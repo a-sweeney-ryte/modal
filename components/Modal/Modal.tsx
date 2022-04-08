@@ -9,7 +9,7 @@ export const Modal = ({
   children,
 }) => { 
   const [isOpen, setIsOpen] = useState(false);  
-  const childrenWithListeners = getElementsWithPropAddedToTargetType(children, 'button', 'onClick', handleButtonClick);
+  const childrenWithListeners = getElementsWithPropAddedToTargetType(children, 'button', 'onClick', handleChildrenButtonClick);
   // const childrenWithListeners = useMemo(() => {
   //   return getElementsWithOnClickListeners(children);
   // }, [])  
@@ -62,9 +62,15 @@ export const Modal = ({
     setModalContent(children)
   }
 
-  // click handlers
+  // ====== click handlers
   function handleButtonClick() {
     setIsOpen(!isOpen)
+  }
+
+  const handleChildrenButtonClick = () => {
+    if(closeOnClickChildrenButton) {
+      setIsOpen(!isOpen)
+    }
   }
   
   const handleOverlayClick = () => { 
