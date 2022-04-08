@@ -48,12 +48,12 @@ export const Modal = ({
     )
   }
 
-  const disableScroll = () => { 
+  function disableScroll() { 
     document.body.style.height = '100%';
     document.body.style.overflow = 'hidden'; 
   }
 
-  const enableScroll = () => { 
+  function enableScroll()  { 
     document.body.style.height = 'inherit';
     document.body.style.overflow = 'overlay'; 
   }
@@ -63,23 +63,23 @@ export const Modal = ({
     setIsOpen(!isOpen)
   }
   
-  const handleOverlayClick = () => { 
+  function handleOverlayClick() { 
     if(closeOnClickOverlay) {
       setIsOpen(!isOpen)
     }
   }
 
-  const handleWrapperClick = (event) => { 
+  function handleWrapperClick(event) { 
     event.stopPropagation();
   }
 
   // ====== listener handlers
-  const onOpenModal = () => {
+  function onOpenModal() {
     disableScroll()
     updateModalContent()
   }
 
-  const onCloseModal = () => {
+  function onCloseModal() {
     enableScroll()
     updateModalContent()
   } 
@@ -90,6 +90,7 @@ export const Modal = ({
     if(!isOpen) onCloseModal()
   }, [isOpen]) 
  
+  // ====== Output 
   return ( 
     <>
       {
