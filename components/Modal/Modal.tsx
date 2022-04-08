@@ -1,66 +1,15 @@
 import styles from './Modal.module.css';
-import {useState, useEffect, useMemo, cloneElement, memo} from 'react';
+import {useState, useEffect, createContext} from 'react'; 
+import { ModalChildren } from '../ModalChildren/ModalChildren.tsx';
+import { ModalButton } from '../ModalButton/ModalButton.tsx';
 
 export const Modal = ({
-  isCloseOnClickChildrenButton = true,
   isCloseOnClickOverlay = true,
-  openButton,
-  openButtonText = 'Open Modal',
-  children,
 }) => { 
+  const ModalContext = createContext(); 
   const [isOpen, setIsOpen] = useState(false); 
-  const [modalContent, setModalContent] = useState(children);
 
-  // add onClick handler to props.openButton
-  const clickableOpenButton = useMemo(() => {
-    if(openButton) {
-      return addPropToElement(openButton, 'onClick', handleButtonClick);
-    }
-  }, []);
-  
-  // ====== Functions 
-  function updateModalContent() {
-    let newModalContent;
-
-    if(isOpen && isCloseOnClickChildrenButton) {
-      newModalContent = addPropToElements(children, 'onClick', handleButtonClick, 'button'); 
-    } else {
-      newModalContent = children;
-    }
-
-    newModalContent = addKeysToElements(newModalContent, 'modal_content');
-
-    setModalContent(newModalContent)
-  }
-
-  function addKeysToElements(elements, keyPrefix) {
-    if(!Array.isArray(elements)) elements = [ elements ];
-
-    return Array.from(elements).map((element, i) => {
-      return addPropToElement(element, 'key', `${keyPrefix}_${i}`);
-    })
-  }
-
-
-  function addPropToElements(elements, key, value, targetType) {
-    if(!Array.isArray(elements)) elements = [ elements ];
-
-    return Array.from(elements).map(element => { 
-      if(targetType && element.type === targetType) {
-        return addPropToElement(element, key, value);
-      } else {
-        return element;
-      }
-    })
-  }
-
-  function addPropToElement(element, key, value) {
-    return cloneElement(
-      element,
-      { [key]: value}
-    )
-  }
-
+  // ====== utils
   function disableScroll() { 
     document.body.style.height = '100%';
     document.body.style.overflow = 'hidden'; 
@@ -89,12 +38,10 @@ export const Modal = ({
   // ====== listener handlers
   function onOpenModal() {
     disableScroll()
-    updateModalContent()
   }
 
   function onCloseModal() {
     enableScroll()
-    updateModalContent()
   } 
 
   // ====== Listeners 
@@ -105,28 +52,20 @@ export const Modal = ({
  
   // ====== Output 
   return ( 
-    <>
-      {
-        openButton ? clickableOpenButton : (
-          <div className={styles.openButtonContainer}>
-            <button className={styles.openButton} onClick={handleButtonClick}>{openButtonText}</button>
-          </div>
-        )
-      }
-     
+    <ModalContext.Provider value={{ isOpen, setIsOpen }}>
       { 
-        isOpen &&  
+        isOpen ?  
         <div className={styles.overlay} onClick={handleOverlayClick}>
           <div className={styles.wrapper} onClick={handleWrapperClick}>
             <div className={styles.closeButtonContainer}>
               <button className={styles.closeButton} onClick={handleButtonClick}>x</button>
             </div>
-            <div>
-              {modalContent}
-            </div>
+            <ModalChildren context={ModalContext}/>
           </div>
         </div>
+        :
+        <ModalButton context={ModalContext}/>
       }
-    </>
+    </ModalContext.Provider>
   )
 } 
