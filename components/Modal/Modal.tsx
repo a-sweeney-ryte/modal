@@ -1,14 +1,12 @@
 import styles from './Modal.module.css';
-import {useState, useEffect, createContext} from 'react'; 
-import { ModalChildren } from '../ModalChildren/ModalChildren.tsx';
-import { ModalButton } from '../ModalButton/ModalButton.tsx';
+import {useEffect} from 'react';  
 
 export const Modal = ({
+  isOpen, 
+  setIsOpen,
   isCloseOnClickOverlay = true,
+  children
 }) => { 
-  const ModalContext = createContext(); 
-  const [isOpen, setIsOpen] = useState(false); 
-
   // ====== utils
   function disableScroll() { 
     document.body.style.height = '100%';
@@ -21,10 +19,6 @@ export const Modal = ({
   }
 
   // ====== click handlers
-  function handleButtonClick() {
-    setIsOpen(!isOpen)
-  }
-  
   function handleOverlayClick() { 
     if(isCloseOnClickOverlay) {
       setIsOpen(!isOpen)
@@ -51,21 +45,13 @@ export const Modal = ({
   }, [isOpen]) 
  
   // ====== Output 
-  return ( 
-    <ModalContext.Provider value={{ isOpen, setIsOpen }}>
-      { 
-        isOpen ?  
-        <div className={styles.overlay} onClick={handleOverlayClick}>
-          <div className={styles.wrapper} onClick={handleWrapperClick}>
-            <div className={styles.closeButtonContainer}>
-              <button className={styles.closeButton} onClick={handleButtonClick}>x</button>
-            </div>
-            <ModalChildren context={ModalContext}/>
-          </div>
+  if(isOpen) {
+    return (
+      <div className={styles.overlay} onClick={handleOverlayClick}>
+        <div className={styles.wrapper} onClick={handleWrapperClick}>
+          {children}
         </div>
-        :
-        <ModalButton context={ModalContext}/>
-      }
-    </ModalContext.Provider>
-  )
+      </div> 
+    )
+  }
 } 

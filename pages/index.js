@@ -1,14 +1,26 @@
 import styles from '../styles/Home.module.css'
 import { Modal } from '../components/Modal/Modal.tsx';
+import { useState } from 'react';
 
 export default function Home() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function handleModalButtonClick() {
+    setIsOpen(!isOpen)
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.hero}> 
         <h1 className={styles.heading}>Example Heading</h1>
         <p className={styles.text}>example text</p>
- 
-        <Modal/>
+
+        <button onClick={handleModalButtonClick}>Open Modal</button>
+
+        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+          <p>Example text</p>
+          <button onClick={handleModalButtonClick}>Close Modal</button>
+        </Modal>
       </div>
 
       <div className={styles.content}>
