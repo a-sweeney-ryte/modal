@@ -20,10 +20,14 @@ export const Modal = ({
   }
 
   // ====== click handlers
-  function handleOverlayClick() { 
+  function handleOverlayClick() {  
     if(isCloseOnClickOverlay) {
       setIsOpen(!isOpen)
     }
+  }
+
+  function handleWrapperClick(e) {
+    e.stopPropagation()
   }
 
   // ====== listener handlers
@@ -45,7 +49,7 @@ export const Modal = ({
   if(isOpen) {
     return createPortal(
       <div className={styles.overlay} onClick={handleOverlayClick}>
-        <div className={styles.wrapper}>
+        <div className={styles.wrapper} onClick={handleWrapperClick}>
           {children}
         </div>
       </div>,
