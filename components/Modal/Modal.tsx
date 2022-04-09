@@ -1,5 +1,6 @@
 import styles from './Modal.module.css';
 import {useEffect} from 'react';  
+import {createPortal} from 'react-dom';
 
 export const Modal = ({
   isOpen, 
@@ -25,10 +26,6 @@ export const Modal = ({
     }
   }
 
-  function handleWrapperClick(event) { 
-    event.stopPropagation();
-  }
-
   // ====== listener handlers
   function onOpenModal() {
     disableScroll()
@@ -46,12 +43,13 @@ export const Modal = ({
  
   // ====== Output 
   if(isOpen) {
-    return (
+    return createPortal(
       <div className={styles.overlay} onClick={handleOverlayClick}>
-        <div className={styles.wrapper} onClick={handleWrapperClick}>
+        <div className={styles.wrapper}>
           {children}
         </div>
-      </div> 
+      </div>,
+      document.body
     )
   }
 } 
